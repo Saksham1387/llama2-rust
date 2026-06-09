@@ -126,7 +126,6 @@ impl Weights {
 }
 
 // ── Transformer ──────────────────────────────────────────────
-// Top level struct for the model config and weights.
 pub struct Transformer {
     pub config:  Config,
     pub weights: Weights,
