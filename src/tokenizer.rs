@@ -6,6 +6,7 @@ pub struct TokenIndex {
     id: u32
 }
 
+#[allow(dead_code)]
 pub struct Tokenizer {
     vocab: Vec<String>,
     vocab_scores: Vec<f32>,
@@ -163,7 +164,7 @@ impl Tokenizer {
 
         piece
     }
-
+    #[allow(dead_code)]
     pub fn decode_string(&self, tokens: &[u32]) -> String {
         let mut out = String::new();
         for (i, &tok) in tokens.iter().enumerate() {
@@ -177,10 +178,10 @@ impl Tokenizer {
         out
     }
 
-    pub fn vocab_size(&self) -> usize { self.vocab_size }
-    pub fn token_to_str(&self, id: u32) -> &str { &self.vocab[id as usize] }
-    pub fn bos_token(&self) -> u32 { 1 }
-    pub fn eos_token(&self) -> u32 { 2 }
+    // pub fn vocab_size(&self) -> usize { self.vocab_size }
+    // pub fn token_to_str(&self, id: u32) -> &str { &self.vocab[id as usize] }
+    // pub fn bos_token(&self) -> u32 { 1 }
+    // pub fn eos_token(&self) -> u32 { 2 }
 }
 
 fn utf8_codepoint_len(b: u8) -> usize {

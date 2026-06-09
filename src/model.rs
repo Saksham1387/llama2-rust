@@ -53,6 +53,7 @@ impl Weights {
     // ── slice helpers ─────────────────────────────────────────
     // Each method returns a &[f32] slice into the big data Vec.
 
+    #[allow(dead_code)]
     pub fn token_embedding(&self, dim: usize, vocab_size: usize) -> &[f32] {
         &self.data[self.token_embedding_offset..self.token_embedding_offset + vocab_size * dim]
     }
@@ -247,6 +248,7 @@ impl Transformer {
 //   token_id=1  → data[dim  .. 2*dim]
 //   token_id=2  → data[2dim .. 3*dim]
 //   token_id=N  → data[N*dim.. N*dim + dim]
+#[allow(dead_code)]
 pub fn embedding_lookup<'a>(weights: &'a Weights, token_id: u32, dim: usize) -> &'a [f32] {
     let start = weights.token_embedding_offset + token_id as usize * dim;
     &weights.data[start..start + dim]
