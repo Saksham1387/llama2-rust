@@ -1,6 +1,6 @@
 # llama-rust
 
-<video src="./screen-recording.mp4" controls width="100%"></video>
+![Demo](./demo.gif)
 
 A Rust port of `llama2.c` for running small LLaMA-style checkpoint files locally from the command line.
 
