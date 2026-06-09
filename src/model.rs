@@ -1,11 +1,12 @@
 // Config, Weights, and Embedding lookup
 
-use std::fs;
+use std::fs::{File};
 use std::io::{self, Read, Cursor};
+
+use memmap2::Mmap;
 
 // ── Config ───────────────────────────────────────────────────
 // Exactly 7 signed integers — the first 28 bytes of the .bin file.
-//
 #[derive(Debug)]
 pub struct Config {
     pub dim:        usize,   // embedding dimension          e.g. 288
@@ -142,8 +143,9 @@ impl Transformer {
     pub fn from_file(path: &str) -> io::Result<Self> {
 
         // read the ENTIRE file into memory as raw bytes
-        let raw_bytes = fs::read(path)?;
-        let mut cursor = Cursor::new(&raw_bytes);
+        let file = File::open(path)?;
+        let mmap = unsafe { Mmap::map(&file)? };
+        let mut cursor = Cursor::new(&mmap);
 
         // ── Step 1: read Config ───────────────────────────────
         let dim            = read_i32(&mut cursor)?;
@@ -173,7 +175,7 @@ impl Transformer {
         // ── Step 3: convert remaining bytes to f32s ───────────
         // Everything after the 28-byte config header is float32 weights.
         // We convert the raw bytes to f32s: every 4 bytes = one f32.
-        let weights_bytes = &raw_bytes[28..]; // skip the 28-byte config header
+        let weights_bytes = &mmap[28..]; // skip the 28-byte config header
         let data: Vec<f32> = weights_bytes
             .chunks_exact(4)
             .map(|b| f32::from_le_bytes([b[0], b[1], b[2], b[3]]))
@@ -255,8 +257,8 @@ pub fn embedding_lookup<'a>(weights: &'a Weights, token_id: u32, dim: usize) -> 
 }
 
 // ── helpers ───────────────────────────────────────────────────
-fn read_i32(cursor: &mut Cursor<&Vec<u8>>) -> io::Result<i32> {
+fn read_i32(r: &mut impl Read) -> io::Result<i32>  {
     let mut buf = [0u8; 4];
-    cursor.read_exact(&mut buf)?;
+    r.read_exact(&mut buf)?;
     Ok(i32::from_le_bytes(buf))
 }

@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 endianness = "0.2.0"
+memmap2 = "0.9.10"
